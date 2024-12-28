@@ -18,9 +18,17 @@ class CircleShape(pygame.sprite.Sprite):
         self.radius = radius
 
     def draw(self, screen):
+        """Method to draw object, intended to be overwritten by children"""
         # sub-classes must override
         pass
 
     def update(self, dt):
+        """Method to update object, intended to be overwritten"""
         # sub-classes must override
         pass
+
+    def check_for_collision(self, other_circleshape):
+        """Method to determine if two circles collide"""
+        dist = self.position.distance_to(other_circleshape.position)
+        combined_radius = self.radius + other_circleshape.radius
+        return dist <= combined_radius

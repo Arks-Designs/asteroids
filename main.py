@@ -6,6 +6,7 @@ from constants import *
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
+from sys import exit
 
 def main():
     """Function: Main game loop for asteroids game."""
@@ -45,6 +46,11 @@ def main():
         # Loop through groups
         for update_obj in updateable:
             update_obj.update(dt)
+
+        for asteroid_obj in asteroids:
+            if player.check_for_collision(asteroid_obj):
+                print("Game over!")
+                exit()
 
         for draw_obj in drawable:
             draw_obj.draw(screen)

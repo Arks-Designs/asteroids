@@ -20,4 +20,4 @@ class Asteroid(CircleShape):
 
     def update(self, dt):
         """Method to update the position of the asteroid"""
-        self.position += self.velocity * dt
+        self.position += (self.velocity * dt)
