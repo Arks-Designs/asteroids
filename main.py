@@ -12,6 +12,13 @@ def main():
     print(f"Screen width: {SCREEN_WIDTH}")
     print(f"Screen height: {SCREEN_HEIGHT}")
 
+    # Create groups
+    updateable = pygame.sprite.Group()
+    drawable = pygame.sprite.Group()
+
+    # Add all Player objects to both groups
+    Player.containers = (updateable, drawable)
+
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
     dt = 0
@@ -27,8 +34,15 @@ def main():
                 return
 
         screen.fill((0,0,0))
-        player.update(dt)
-        player.draw(screen)
+
+        # Loop through groups
+        for update_obj in updateable:
+            update_obj.update(dt)
+
+        for draw_obj in drawable:
+            draw_obj.draw(screen)
+
+
         pygame.display.flip()
         dt = clock.tick(60) / 1000
 
