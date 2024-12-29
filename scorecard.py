@@ -9,6 +9,7 @@ class ScoreCard():
         self.score = 0
         self.save_flag = True
         self.high_score = 0
+        self.__save_path = path
 
         try:
             with open(path) as f:
@@ -37,3 +38,13 @@ class ScoreCard():
         text = f"Current score: {self.score}, High score: {self.high_score}"
         game_font = pygame.freetype.Font(None, 24)
         game_font.render_to(screen, (10, 10), text, "yellow")
+
+    def save_high_score(self):
+        """Method to save high score"""
+        if self.score > self.high_score:
+            self.high_score = self.score
+            if self.save_flag:
+                with open(self.__save_path, "w") as f:
+                    f.write(f"{self.high_score}")
+            else:
+                print("Save flag wasn't set, high score not saved")

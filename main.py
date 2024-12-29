@@ -54,6 +54,9 @@ def main():
         for asteroid_obj in asteroids:
             if player.check_for_collision(asteroid_obj):
                 print("Game over!")
+                if score_card.get_high_score() < score_card.get_score():
+                    score_card.save_high_score()
+                    print(f"New high score: {score_card.get_high_score()}!!")
                 exit()
 
         for asteroid_obj in asteroids:
