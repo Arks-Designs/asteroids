@@ -20,8 +20,11 @@ class ScoreCard():
     def get_score(self):
         """Getter method to get current score"""
         return self.score
-    
+
     def get_high_score(self):
         """Getter method to get high score"""
         return self.high_score
 
+    def increase(self, value):
+        """Method to increase the current game score"""
+        self.score += value

@@ -39,8 +39,6 @@ def main():
     #asteroid = Asteroid(x, y, PLAYER_RADIUS)
     asteroid_field = AsteroidField()
     score_card = ScoreCard()
-    #print(f"Score Card: current score {score_card.score}, high score {score_card.high_score}")
-
 
     while True:
         for event in pygame.event.get():
@@ -61,8 +59,11 @@ def main():
         for asteroid_obj in asteroids:
             for shot_obj in shots:
                 if asteroid_obj.check_for_collision(shot_obj):
-                    asteroid_obj.split()
+                    result = asteroid_obj.split()
+                    score_card.increase(result)
                     shot_obj.kill()
+                    #print(f"Score Card: result {result}, current score {score_card.score}, high score {score_card.high_score}")
+
 
         for draw_obj in drawable:
             draw_obj.draw(screen)
