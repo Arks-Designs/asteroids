@@ -64,9 +64,10 @@ def main():
                     shot_obj.kill()
                     #print(f"Score Card: result {result}, current score {score_card.score}, high score {score_card.high_score}")
 
-
         for draw_obj in drawable:
             draw_obj.draw(screen)
+
+        score_card.write(screen)
 
 
         pygame.display.flip()

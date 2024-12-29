@@ -1,5 +1,8 @@
 """Module to keep score of the game"""
 
+import pygame
+import pygame.freetype
+
 class ScoreCard():
     """Score card for the game"""
     def __init__(self, path="./scorecard.txt"):
@@ -28,3 +31,9 @@ class ScoreCard():
     def increase(self, value):
         """Method to increase the current game score"""
         self.score += value
+
+    def write(self, screen):
+        """Writes score on screen"""
+        text = f"Current score: {self.score}, High score: {self.high_score}"
+        game_font = pygame.freetype.Font(None, 24)
+        game_font.render_to(screen, (10, 10), text, "yellow")
