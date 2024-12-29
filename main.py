@@ -6,6 +6,7 @@ from constants import *
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
+from scorecard import ScoreCard
 from shot import Shot
 from sys import exit
 
@@ -37,6 +38,8 @@ def main():
     player = Player(x, y, PLAYER_RADIUS)
     #asteroid = Asteroid(x, y, PLAYER_RADIUS)
     asteroid_field = AsteroidField()
+    score_card = ScoreCard()
+    #print(f"Score Card: current score {score_card.score}, high score {score_card.high_score}")
 
 
     while True:
