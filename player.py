@@ -2,15 +2,17 @@
 
 import pygame
 from circleshape import CircleShape
-from constants import PLAYER_SHOOT_COOLDOWN, PLAYER_SHOOT_SPEED, PLAYER_TURN_SPEED, PLAYER_SPEED, SHOT_RADIUS
+from constants import PLAYER_SHOOT_COOLDOWN, PLAYER_SHOOT_SPEED, PLAYER_STARTING_LIVES, SCREEN_WIDTH
+from constants import PLAYER_TURN_SPEED, PLAYER_SPEED, SHOT_RADIUS
 from shot import Shot
 
 class Player(CircleShape):
     """Class for the player character"""
-    def __init__(self, x, y, radius):
+    def __init__(self, x, y, radius, lives=PLAYER_STARTING_LIVES):
         super().__init__(x, y, radius)
         self.rotation = 0
         self.shot_cooldown = 0
+        self.lives = lives
 
     def triangle(self):
         """Method for triangle representing character"""
@@ -59,3 +61,15 @@ class Player(CircleShape):
             self.shoot()
 
         self.shot_cooldown = max(0, self.shot_cooldown - dt)
+
+    def respawn(self, x, y):
+        """Method to kill and respawn the player"""
+        self.kill()
+        return Player(x, y, self.radius, self.lives - 1)
+    
+    def write(self, screen):
+        """Writes score on screen"""
+        text_lives = '\u0394 ' * self.lives
+        text = f"Remaining lives: {text_lives}"
+        game_font = pygame.freetype.Font(None, 24)
+        game_font.render_to(screen, (SCREEN_WIDTH - 275, 10), text, "yellow")

@@ -36,6 +36,7 @@ def main():
     x = SCREEN_WIDTH / 2
     y = SCREEN_HEIGHT / 2
     player = Player(x, y, PLAYER_RADIUS)
+    #lives = PLAYER_STARTING_LIVES
     #asteroid = Asteroid(x, y, PLAYER_RADIUS)
     asteroid_field = AsteroidField()
     score_card = ScoreCard()
@@ -53,6 +54,11 @@ def main():
 
         for asteroid_obj in asteroids:
             if player.check_for_collision(asteroid_obj):
+                if player.lives > 0:
+                    player = player.respawn(x, y)
+                    for asteroid_obj in asteroids:
+                        asteroid_obj.kill()
+                    break
                 print("Game over!")
                 if score_card.get_high_score() < score_card.get_score():
                     score_card.save_high_score()
@@ -71,6 +77,7 @@ def main():
             draw_obj.draw(screen)
 
         score_card.write(screen)
+        player.write(screen)
 
 
         pygame.display.flip()
