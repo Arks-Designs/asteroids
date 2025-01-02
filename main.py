@@ -53,7 +53,7 @@ def main():
 
         # Loop through groups
         for update_obj in updateable:
-            update_obj.update(dt)
+            update_obj.update(dt, screen)
 
         for asteroid_obj in asteroids:
             if player.check_for_collision(asteroid_obj):

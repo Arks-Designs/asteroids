@@ -13,7 +13,7 @@ class ExplosionRing(CircleShape):
 
     EXPLOSION_COLORS = ["firebrick4", "firebrick1", "chocolate1", "darkorange", "darkgoldenrod1"]
 
-    def update(self, dt):
+    def update(self, dt, screen=None):
         """Method to update explosion"""
         self.radius *= random.uniform(.5, 1.25)
         self.__clock += 1

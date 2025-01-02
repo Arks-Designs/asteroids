@@ -35,10 +35,12 @@ class Player(CircleShape):
         """Method to rotate the player model"""
         self.rotation += PLAYER_TURN_SPEED * dt
 
-    def move(self, dt):
+    def move(self, dt, screen=None):
         """Method to move the player forwards"""
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
         self.position += forward * self.speed * dt
+        if screen:
+            self.position = self.wrap_position(screen)
 
     def shoot(self):
         """Method to shoot a shot"""
@@ -56,7 +58,7 @@ class Player(CircleShape):
         elif acceleration < 0:
             self.speed = max(-1 * PLAYER_SPEED, self.speed + acceleration)
 
-    def update(self, dt):
+    def update(self, dt, screen=None):
         """Method to interact with character model"""
         keys = pygame.key.get_pressed()
 
@@ -68,16 +70,16 @@ class Player(CircleShape):
             if PLAYER_ACCELERATION_FLAG:
                 self.accelerate(PLAYER_ACCELERATION)
             else:
-                self.move(dt)
+                self.move(dt, screen)
         if keys[pygame.K_s]:
             if PLAYER_ACCELERATION_FLAG:
                 self.accelerate(PLAYER_ACCELERATION * -1)
             else:
-                self.move(dt * -1)
+                self.move(dt * -1, screen)
         if keys[pygame.K_SPACE]:
             self.shoot()
         if PLAYER_ACCELERATION_FLAG:
-            self.move(dt)
+            self.move(dt, screen)
 
         self.shot_cooldown = max(0, self.shot_cooldown - dt)
 

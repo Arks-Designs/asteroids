@@ -20,9 +20,11 @@ class Asteroid(CircleShape):
             2
         )
 
-    def update(self, dt):
+    def update(self, dt, screen=None):
         """Method to update the position of the asteroid"""
         self.position += (self.velocity * dt)
+        if screen:
+            self.position = self.wrap_position(screen)
 
     def split(self):
         """Method to split the asteroid"""
