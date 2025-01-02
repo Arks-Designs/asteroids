@@ -3,7 +3,7 @@
 import pygame
 from circleshape import CircleShape
 from constants import PLAYER_ACCELERATION, PLAYER_SHOOT_COOLDOWN, PLAYER_SHOOT_SPEED, PLAYER_STARTING_LIVES, SCREEN_WIDTH
-from constants import PLAYER_TURN_SPEED, PLAYER_SPEED, SHOT_RADIUS
+from constants import PLAYER_TURN_SPEED, PLAYER_SPEED, SHOT_RADIUS, PLAYER_ACCELERATION_FLAG
 from shot import Shot
 
 class Player(CircleShape):
@@ -13,7 +13,10 @@ class Player(CircleShape):
         self.rotation = 0
         self.shot_cooldown = 0
         self.lives = lives
-        self.speed = 0
+        if PLAYER_ACCELERATION_FLAG:
+            self.speed = 0
+        else:
+            self.speed = PLAYER_SPEED
 
     def triangle(self):
         """Method for triangle representing character"""
@@ -35,7 +38,7 @@ class Player(CircleShape):
     def move(self, dt):
         """Method to move the player forwards"""
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
-        self.position += forward * self.speed * abs(dt)
+        self.position += forward * self.speed * dt
 
     def shoot(self):
         """Method to shoot a shot"""
@@ -52,7 +55,6 @@ class Player(CircleShape):
             self.speed = min(PLAYER_SPEED, self.speed + acceleration)
         elif acceleration < 0:
             self.speed = max(-1 * PLAYER_SPEED, self.speed + acceleration)
-        print(f"Speed: {self.speed}")
 
     def update(self, dt):
         """Method to interact with character model"""
@@ -63,14 +65,19 @@ class Player(CircleShape):
         if keys[pygame.K_d]:
             self.rotate(dt)
         if keys[pygame.K_w]:
-            self.accelerate(PLAYER_ACCELERATION)
-            #self.move(dt)
+            if PLAYER_ACCELERATION_FLAG:
+                self.accelerate(PLAYER_ACCELERATION)
+            else:
+                self.move(dt)
         if keys[pygame.K_s]:
-            self.accelerate(PLAYER_ACCELERATION * -1)
-            #self.move(dt * -1)
+            if PLAYER_ACCELERATION_FLAG:
+                self.accelerate(PLAYER_ACCELERATION * -1)
+            else:
+                self.move(dt * -1)
         if keys[pygame.K_SPACE]:
             self.shoot()
-        self.move(dt)
+        if PLAYER_ACCELERATION_FLAG:
+            self.move(dt)
 
         self.shot_cooldown = max(0, self.shot_cooldown - dt)
 
