@@ -1,14 +1,15 @@
 # this allows us to use code from
 # the open-source pygame library
 # throughout this file
+from sys import exit
 import pygame
 from constants import *
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from scorecard import ScoreCard
+from explosionring import ExplosionRing
 from shot import Shot
-from sys import exit
 
 def main():
     """Function: Main game loop for asteroids game."""
@@ -22,12 +23,14 @@ def main():
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
     shots = pygame.sprite.Group()
+    explosions = pygame.sprite.Group()
 
     # Add all Player objects to both groups
     Player.containers = (updateable, drawable)
     Asteroid.containers = (asteroids, updateable, drawable)
     AsteroidField.containers = (updateable)
     Shot.containers = (shots, updateable, drawable)
+    ExplosionRing.containers = (explosions, updateable, drawable)
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
@@ -68,6 +71,11 @@ def main():
         for asteroid_obj in asteroids:
             for shot_obj in shots:
                 if asteroid_obj.check_for_collision(shot_obj):
+                    explosion = ExplosionRing(
+                        asteroid_obj.position.x,
+                        asteroid_obj.position.y,
+                        asteroid_obj.radius
+                    )
                     result = asteroid_obj.split()
                     score_card.increase(result)
                     shot_obj.kill()
@@ -75,6 +83,10 @@ def main():
 
         for draw_obj in drawable:
             draw_obj.draw(screen)
+
+        for explosion_obj in explosions:
+            if explosion_obj.get_decompose_clock() >= 30:
+                explosion_obj.kill()
 
         score_card.write(screen)
         player.write(screen)
