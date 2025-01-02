@@ -2,7 +2,7 @@
 
 import pygame
 from circleshape import CircleShape
-from constants import PLAYER_SHOOT_COOLDOWN, PLAYER_SHOOT_SPEED, PLAYER_STARTING_LIVES, SCREEN_WIDTH
+from constants import PLAYER_ACCELERATION, PLAYER_SHOOT_COOLDOWN, PLAYER_SHOOT_SPEED, PLAYER_STARTING_LIVES, SCREEN_WIDTH
 from constants import PLAYER_TURN_SPEED, PLAYER_SPEED, SHOT_RADIUS
 from shot import Shot
 
@@ -13,6 +13,7 @@ class Player(CircleShape):
         self.rotation = 0
         self.shot_cooldown = 0
         self.lives = lives
+        self.speed = 0
 
     def triangle(self):
         """Method for triangle representing character"""
@@ -34,7 +35,7 @@ class Player(CircleShape):
     def move(self, dt):
         """Method to move the player forwards"""
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
-        self.position += forward * PLAYER_SPEED * dt
+        self.position += forward * self.speed * abs(dt)
 
     def shoot(self):
         """Method to shoot a shot"""
@@ -45,6 +46,14 @@ class Player(CircleShape):
             new_shot.velocity.scale_to_length(PLAYER_SHOOT_SPEED)
             self.shot_cooldown = PLAYER_SHOOT_COOLDOWN
 
+    def accelerate(self, acceleration=PLAYER_ACCELERATION):
+        """Method to accelerate the player"""
+        if acceleration > 0:
+            self.speed = min(PLAYER_SPEED, self.speed + acceleration)
+        elif acceleration < 0:
+            self.speed = max(-1 * PLAYER_SPEED, self.speed + acceleration)
+        print(f"Speed: {self.speed}")
+
     def update(self, dt):
         """Method to interact with character model"""
         keys = pygame.key.get_pressed()
@@ -54,11 +63,14 @@ class Player(CircleShape):
         if keys[pygame.K_d]:
             self.rotate(dt)
         if keys[pygame.K_w]:
-            self.move(dt)
+            self.accelerate(PLAYER_ACCELERATION)
+            #self.move(dt)
         if keys[pygame.K_s]:
-            self.move(dt * -1)
+            self.accelerate(PLAYER_ACCELERATION * -1)
+            #self.move(dt * -1)
         if keys[pygame.K_SPACE]:
             self.shoot()
+        self.move(dt)
 
         self.shot_cooldown = max(0, self.shot_cooldown - dt)
 
