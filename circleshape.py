@@ -33,6 +33,24 @@ class CircleShape(pygame.sprite.Sprite):
         combined_radius = self.radius + other_circleshape.radius
         return dist <= combined_radius
 
+    def check_for_collision_triangle(self, other_triangleshape):
+        """Method to check for collision between a circle object and a trianglular one"""
+        # Check whether a vertex is in/on circle
+        vert = other_triangleshape.triangle()
+        for v in vert:
+            if self.position.distance_to(v) <= self.radius:
+                return True
+
+        # Test whether circle in/on edge of triangle triangle
+        for points in [(vert[0], vert[1]), (vert[1], vert[2]), (vert[2], vert[0])]:
+            slope = points[1].y - points[0].y
+            inter = points[1].x - points[0].x
+            for i in range(round(min(points[0].x, points[1].x)), round(max(points[0].x, points[1].x)), 100):
+                if self.position.distance_to((i,i * slope + inter)) <= self.radius:
+                    return True
+
+        return False
+
     def wrap_position(self, screen):
         """Method to wrap the object around the screen"""
         x = self.position.x % screen.get_width()

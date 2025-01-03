@@ -58,7 +58,8 @@ def main():
             update_obj.update(dt, screen)
 
         for asteroid_obj in asteroids:
-            if player.check_for_collision(asteroid_obj):
+            if asteroid_obj.check_for_collision_triangle(player):
+            #if player.check_for_collision(asteroid_obj):
                 if player.lives > 0:
                     player = player.respawn(x, y)
                     for asteroid_obj in asteroids:
