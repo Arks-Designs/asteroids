@@ -5,6 +5,9 @@ from circleshape import CircleShape
 from constants import PLAYER_ACCELERATION, PLAYER_SHOOT_COOLDOWN, PLAYER_SHOOT_SPEED, PLAYER_STARTING_LIVES, SCREEN_WIDTH
 from constants import PLAYER_TURN_SPEED, PLAYER_SPEED, SHOT_RADIUS, PLAYER_ACCELERATION_FLAG
 from shot import Shot
+from basicweapon import BasicWeapon
+from shotgun import ShotGun
+from backandforwardgun import BackAndForwardGun
 
 class Player(CircleShape):
     """Class for the player character"""
@@ -17,6 +20,7 @@ class Player(CircleShape):
             self.speed = 0
         else:
             self.speed = PLAYER_SPEED
+        self.weapon = BackAndForwardGun(PLAYER_SHOOT_COOLDOWN, PLAYER_SHOOT_SPEED, SHOT_RADIUS)
 
     def triangle(self):
         """Method for triangle representing character"""
@@ -42,14 +46,14 @@ class Player(CircleShape):
         if screen:
             self.position = self.wrap_position(screen)
 
-    def shoot(self):
-        """Method to shoot a shot"""
-        if self.shot_cooldown <= 0:
-            new_shot = Shot(self.position.x, self.position.y, SHOT_RADIUS)
-            new_shot.velocity = pygame.Vector2(0,1)
-            new_shot.velocity = new_shot.velocity.rotate(self.rotation)
-            new_shot.velocity.scale_to_length(PLAYER_SHOOT_SPEED)
-            self.shot_cooldown = PLAYER_SHOOT_COOLDOWN
+    # def shoot(self):
+    #     """Method to shoot a shot"""
+    #     if self.shot_cooldown <= 0:
+    #         new_shot = Shot(self.position.x, self.position.y, SHOT_RADIUS)
+    #         new_shot.velocity = pygame.Vector2(0,1)
+    #         new_shot.velocity = new_shot.velocity.rotate(self.rotation)
+    #         new_shot.velocity.scale_to_length(PLAYER_SHOOT_SPEED)
+    #         self.shot_cooldown = PLAYER_SHOOT_COOLDOWN
 
     def accelerate(self, acceleration=PLAYER_ACCELERATION):
         """Method to accelerate the player"""
@@ -77,11 +81,12 @@ class Player(CircleShape):
             else:
                 self.move(dt * -1, screen)
         if keys[pygame.K_SPACE]:
-            self.shoot()
+            self.weapon.shoot(self.position, self.rotation)
         if PLAYER_ACCELERATION_FLAG:
             self.move(dt, screen)
 
-        self.shot_cooldown = max(0, self.shot_cooldown - dt)
+        #self.shot_cooldown = max(0, self.shot_cooldown - dt)
+        self.weapon.update(dt)
 
     def respawn(self, x, y):
         """Method to kill and respawn the player"""
