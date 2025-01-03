@@ -1,7 +1,8 @@
 """Module representing asteroid object"""
 
-import pygame
 import random
+from math import cos, sin, radians
+import pygame
 from circleshape import CircleShape
 from constants import ASTEROID_KILL_SCORE, ASTEROID_MIN_RADIUS, ASTEROID_SPLIT_SCORE
 
@@ -9,14 +10,34 @@ class Asteroid(CircleShape):
     """Class for the asteroid object"""
     def __init__(self, x, y, radius):
         super().__init__(x, y, radius)
+        self.look = self.generate_boundary()
+
+    def generate_boundary(self):
+        """Generate random points on the boundary"""
+        angles = range(0, 360, 6)
+        xs = [self.radius * sin(radians(angle)) + random.random() * (self.radius * .3) for angle in angles]
+        ys = [self.radius * cos(radians(angle)) + random.random() * (self.radius * .3) for angle in angles]
+        points = list(zip(xs, ys))
+        points.append(points[0])
+        return points
+
+    def generate_position(self, boundary):
+        """Given a boundary and a position returns the object"""
+        return [(x + self.position.x, y + self.position.y) for x,y in boundary]
 
     def draw(self, screen):
         """Method draws the asteroid object"""
-        pygame.draw.circle(
+        # pygame.draw.circle(
+        #     screen,
+        #     "white",
+        #     self.position,
+        #     self.radius,
+        #     2
+        # )
+        pygame.draw.polygon(
             screen,
-            "white",
-            self.position,
-            self.radius,
+            "white", 
+            self.generate_position(self.look),
             2
         )
 
