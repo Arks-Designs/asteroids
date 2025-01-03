@@ -35,6 +35,7 @@ def main():
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
     dt = 0
+    background = pygame.image.load(BACKGROUND_PATH)
 
     x = SCREEN_WIDTH / 2
     y = SCREEN_HEIGHT / 2
@@ -50,6 +51,7 @@ def main():
                 return
 
         screen.fill((0,0,0))
+        screen.blit(background, (0,0))
 
         # Loop through groups
         for update_obj in updateable:
