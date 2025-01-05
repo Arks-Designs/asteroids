@@ -2,12 +2,14 @@
 
 import pygame
 from circleshape import CircleShape
-from constants import PLAYER_ACCELERATION, PLAYER_SHOOT_COOLDOWN, PLAYER_SHOOT_SPEED, PLAYER_STARTING_LIVES, SCREEN_WIDTH
+from constants import PLAYER_ACCELERATION, PLAYER_SHOOT_COOLDOWN, PLAYER_SHOOT_SPEED
+from constants import BOMB_RADIUS, PLAYER_STARTING_LIVES, SCREEN_WIDTH
 from constants import PLAYER_TURN_SPEED, PLAYER_SPEED, SHOT_RADIUS, PLAYER_ACCELERATION_FLAG
 from shot import Shot
 from basicweapon import BasicWeapon
 from shotgun import ShotGun
 from backandforwardgun import BackAndForwardGun
+from bomb import Bomb
 
 class Player(CircleShape):
     """Class for the player character"""
@@ -15,6 +17,7 @@ class Player(CircleShape):
         super().__init__(x, y, radius)
         self.rotation = 0
         self.shot_cooldown = 0
+        self.bomb_cooldown = 0
         self.lives = lives
         if PLAYER_ACCELERATION_FLAG:
             self.speed = 0
@@ -86,11 +89,14 @@ class Player(CircleShape):
                 self.move(dt * -1, screen)
         if keys[pygame.K_SPACE]:
             self.weapon.shoot(self.position, self.rotation)
+        if keys[pygame.K_b]:
+            self.drop_bomb()
         if PLAYER_ACCELERATION_FLAG:
             self.move(dt, screen)
 
         #self.shot_cooldown = max(0, self.shot_cooldown - dt)
         self.weapon.update(dt)
+        self.bomb_cooldown = max(0, self.bomb_cooldown - dt)
         self.invulnerability_countdown = max(0, self.invulnerability_countdown - dt)
         self.speed_boost_timer = max(0, self.speed_boost_timer - dt)
         if self.max_speed > PLAYER_SPEED and self.speed_boost_timer <= 0:
@@ -122,6 +128,12 @@ class Player(CircleShape):
         self.max_speed = self.max_speed / 2
         if not PLAYER_ACCELERATION_FLAG:
             self.speed = self.max_speed
+
+    def drop_bomb(self):
+        """Method to drop a bomb"""
+        if self.bomb_cooldown <= 0:
+            new_bomb = Bomb(self.position.x, self.position.y, BOMB_RADIUS)
+            self.bomb_cooldown = 4
 
     def write(self, screen):
         """Writes score on screen"""

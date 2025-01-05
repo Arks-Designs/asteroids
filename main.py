@@ -13,6 +13,7 @@ from speedpowerup import SpeedPowerUp
 from scorecard import ScoreCard
 from explosionring import ExplosionRing
 from shot import Shot
+from bomb import Bomb
 
 def main():
     """Function: Main game loop for asteroids game."""
@@ -28,6 +29,7 @@ def main():
     shots = pygame.sprite.Group()
     explosions = pygame.sprite.Group()
     powerups = pygame.sprite.Group()
+    bombs = pygame.sprite.Group()
 
     # Add all Player objects to both groups
     Player.containers = (updateable, drawable)
@@ -37,6 +39,8 @@ def main():
     ExplosionRing.containers = (explosions, updateable, drawable)
     GunPowerUp.containers = (drawable, powerups)
     SpeedPowerUp.containers = (drawable, powerups)
+    Bomb.containers = (drawable, bombs)
+
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
@@ -87,8 +91,8 @@ def main():
                 exit()
 
         for asteroid_obj in asteroids:
-            for shot_obj in shots:
-                if asteroid_obj.check_for_collision(shot_obj):
+            for obj in shots:
+                if asteroid_obj.check_for_collision(obj):
                     explosion = ExplosionRing(
                         asteroid_obj.position.x,
                         asteroid_obj.position.y,
@@ -96,8 +100,17 @@ def main():
                     )
                     result = asteroid_obj.split()
                     score_card.increase(result)
-                    shot_obj.kill()
-                    #print(f"Score Card: result {result}, current score {score_card.score}, high score {score_card.high_score}")
+                    obj.kill()
+            for obj in bombs:
+                if asteroid_obj.check_for_collision(obj):
+                    explosion = ExplosionRing(
+                        asteroid_obj.position.x,
+                        asteroid_obj.position.y,
+                        asteroid_obj.radius
+                    )
+                    result = asteroid_obj.split()
+                    score_card.increase(result)
+                    obj.kill()
 
         for draw_obj in drawable:
             draw_obj.draw(screen)
