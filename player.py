@@ -21,6 +21,10 @@ class Player(CircleShape):
         else:
             self.speed = PLAYER_SPEED
         self.weapon = BackAndForwardGun(PLAYER_SHOOT_COOLDOWN, PLAYER_SHOOT_SPEED, SHOT_RADIUS)
+        self.shielded = False
+        self.invulnerability_countdown = 0
+        self.max_speed = PLAYER_SPEED
+        self.speed_boost_timer = 0
 
     def triangle(self):
         """Method for triangle representing character"""
@@ -58,9 +62,9 @@ class Player(CircleShape):
     def accelerate(self, acceleration=PLAYER_ACCELERATION):
         """Method to accelerate the player"""
         if acceleration > 0:
-            self.speed = min(PLAYER_SPEED, self.speed + acceleration)
+            self.speed = min(self.max_speed, self.speed + acceleration)
         elif acceleration < 0:
-            self.speed = max(-1 * PLAYER_SPEED, self.speed + acceleration)
+            self.speed = max(-1 * self.max_speed, self.speed + acceleration)
 
     def update(self, dt, screen=None):
         """Method to interact with character model"""
@@ -87,12 +91,38 @@ class Player(CircleShape):
 
         #self.shot_cooldown = max(0, self.shot_cooldown - dt)
         self.weapon.update(dt)
+        self.invulnerability_countdown = max(0, self.invulnerability_countdown - dt)
+        self.speed_boost_timer = max(0, self.speed_boost_timer - dt)
+        if self.max_speed > PLAYER_SPEED and self.speed_boost_timer <= 0:
+            self.lose_speed_boost()
 
     def respawn(self, x, y):
         """Method to kill and respawn the player"""
         self.kill()
-        return Player(x, y, self.radius, self.lives - 1)
-    
+        return Player(x,y, self.radius, self.lives - 1)
+
+    def gain_shield(self):
+        """Shields the player"""
+        self.shielded = True
+
+    def lose_shield(self):
+        """Removes shield and sets invulnerability timer"""
+        self.shielded = False
+        self.invulnerability_countdown = 2.5
+
+    def gain_speed_boost(self):
+        """Method to gain a speed boost"""
+        self.max_speed = self.max_speed * 2
+        if not PLAYER_ACCELERATION_FLAG:
+            self.speed = self.max_speed
+        self.speed_boost_timer = 7
+
+    def lose_speed_boost(self):
+        """Method to remove the speed boost"""
+        self.max_speed = self.max_speed / 2
+        if not PLAYER_ACCELERATION_FLAG:
+            self.speed = self.max_speed
+
     def write(self, screen):
         """Writes score on screen"""
         text_lives = '\u0394 ' * self.lives

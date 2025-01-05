@@ -8,6 +8,8 @@ from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from gunpowerup import GunPowerUp
+from shieldpowerup import ShieldPowerUp
+from speedpowerup import SpeedPowerUp
 from scorecard import ScoreCard
 from explosionring import ExplosionRing
 from shot import Shot
@@ -34,6 +36,7 @@ def main():
     Shot.containers = (shots, updateable, drawable)
     ExplosionRing.containers = (explosions, updateable, drawable)
     GunPowerUp.containers = (drawable, powerups)
+    SpeedPowerUp.containers = (drawable, powerups)
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
@@ -47,7 +50,7 @@ def main():
     #asteroid = Asteroid(x, y, PLAYER_RADIUS)
     asteroid_field = AsteroidField()
     score_card = ScoreCard()
-    gun = GunPowerUp(300,300, 10)
+    speed = SpeedPowerUp(300,300, 10)
 
     while True:
         for event in pygame.event.get():
@@ -67,8 +70,11 @@ def main():
                 powerup_obj.kill()
 
         for asteroid_obj in asteroids:
-            if asteroid_obj.check_for_collision_triangle(player):
+            if asteroid_obj.check_for_collision_triangle(player) and player.invulnerability_countdown == 0:
             #if player.check_for_collision(asteroid_obj):
+                if player.shielded:
+                    player.lose_shield()
+                    break
                 if player.lives > 0:
                     player = player.respawn(x, y)
                     for asteroid_obj in asteroids:
